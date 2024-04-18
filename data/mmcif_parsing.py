@@ -197,7 +197,10 @@ def parse(*,
 
     # Determine the protein chains, and their start numbers according to the
     # internal mmCIF numbering scheme (likely but not guaranteed to be 1).
-    valid_chains = _get_protein_chains(parsed_info=parsed_info)
+    valid_chains = {}
+    valid_chains['A'] = [Monomer(id=file_id, num=1)]
+    valid_chains = _get_rna_chains(parsed_info=parsed_info)
+    # valid_chains = _get_protein_chains(parsed_info=parsed_info)
     if not valid_chains:
       return ParsingResult(
           None, {(file_id, ''): 'No protein chains found in this file.'})
@@ -233,7 +236,7 @@ def parse(*,
         position = ResiduePosition(chain_id=atom.author_chain_id,
                                    residue_number=int(atom.author_seq_num),
                                    insertion_code=insertion_code)
-        seq_idx = int(atom.mmcif_seq_num) - seq_start_num[atom.mmcif_chain_id]
+        seq_idx = int(atom.mmcif_seq_num) - int(seq_start_num[atom.mmcif_chain_id])
         current = seq_to_structure_mappings.get(atom.author_chain_id, {})
         current[seq_idx] = ResidueAtPosition(position=position,
                                              name=atom.residue_name,
@@ -257,8 +260,9 @@ def parse(*,
       author_chain = mmcif_to_author_chain_id[chain_id]
       seq = []
       for monomer in seq_info:
-        code = SCOPData.protein_letters_3to1.get(monomer.id, 'X')
-        seq.append(code if len(code) == 1 else 'X')
+        # code = SCOPData.protein_letters_3to1.get(monomer.id, 'X')
+        # seq.append(code if len(code) == 1 else 'X')
+        seq.append(monomer.id)
       seq = ''.join(seq)
       author_chain_to_sequence[author_chain] = seq
 
@@ -301,11 +305,11 @@ def _get_header(parsed_info: MmCIFDict) -> PdbHeader:
 
   # Note: The release_date here corresponds to the oldest revision. We prefer to
   # use this for dataset filtering over the deposition_date.
-  if '_pdbx_audit_revision_history.revision_date' in parsed_info:
-    header['release_date'] = get_release_date(parsed_info)
-  else:
-    logging.warning('Could not determine release_date: %s',
-                    parsed_info['_entry.id'])
+  # if '_pdbx_audit_revision_history.revision_date' in parsed_info:
+  #   header['release_date'] = get_release_date(parsed_info)
+  # else:
+  #   logging.warning('Could not determine release_date: %s',
+  #                   parsed_info['_entry.id'])
 
   header['resolution'] = 0.00
   for res_key in ('_refine.ls_d_res_high', '_em_3d_reconstruction.resolution',
@@ -332,6 +336,23 @@ def _get_atom_site_list(parsed_info: MmCIFDict) -> Sequence[AtomSite]:
       parsed_info['_atom_site.group_PDB'],
       parsed_info['_atom_site.pdbx_PDB_model_num'],
       )]
+
+def _get_rna_chains(
+    *, parsed_info: Mapping[str, Any]) -> Mapping[ChainId, Sequence[Monomer]]:
+  """Extracts polymer information for RNA chains only.
+
+  Args:
+    parsed_info: _mmcif_dict produced by the Biopython parser.
+
+  Returns:
+    A dict mapping mmcif chain id to a list of Monomers.
+  """
+  # Get polymer information for each entity in the structure.
+  polymers = collections.defaultdict(list)
+  for nt, nid in zip(parsed_info['_atom_site.label_comp_id'], parsed_info['_atom_site.label_seq_id']):
+    polymers['A'].append(Monomer(id=nt, num=nid))
+  
+  return polymers
 
 
 def _get_protein_chains(

@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Preprocess_pdb",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "data/pdb/preprocess_pdb.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mmcif_dir",
+                "/data/3d/bgsu_cifs/",
+                "--debug"
+            ]
+
+        }
+        {
+            "name": "List_of_atoms",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "List_of_atoms.py",
+            "console": "integratedTerminal",
+        }
+    ]
+}

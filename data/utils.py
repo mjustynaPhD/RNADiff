@@ -77,7 +77,7 @@ def parse_pdb(pdb_name: str, pdb_path: str, scale_factor=1., mean_center=True):
 
 
 def parse_chain_feats(chain_feats, scale_factor=1., mean_center=True):
-    ca_idx = residue_constants.atom_order['CA']
+    ca_idx = residue_constants.atom_order['C4\'']
     bb_pos = chain_feats['atom_positions'][:, ca_idx]
     bb_center = np.mean(bb_pos, axis=0)
     centered_pos = chain_feats['atom_positions'] - bb_center[None, None, :]

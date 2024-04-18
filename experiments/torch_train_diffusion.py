@@ -271,8 +271,9 @@ class Experiment:
         pred = self.model(batch)
         bb_mask = batch['bb_mask']
         t = batch['t'] # [B]
+        # True noise could be generated here, but they generate it in the dataset
 
-        errors = pred - labels # of shape [B, N, D]
+        errors = pred - labels # The label is actually the pure noise. It's generated in the dataset.
         losses = torch.mean(errors**2, dim=(-1,))
         aux_data = {
             'pred': pred,
@@ -503,7 +504,7 @@ def run():
 
             step += 1
             loss, aux_data = exp.update_fn(
-                train_features, train_labels)
+                train_features, train_labels) # Here should be given the true noise
             log_lossses.append(move_to_np(loss))
 
             # Log results

@@ -34,7 +34,8 @@ def process_chain(chain: Chain, chain_id: str) -> Protein:
     b_factors = []
     chain_ids = []
     for res in chain:
-        res_shortname = residue_constants.restype_3to1.get(res.resname, 'X')
+        # res_shortname = residue_constants.restype_3to1.get(res.resname, 'X')
+        res_shortname = res.resname
         restype_idx = residue_constants.restype_order.get(
             res_shortname, residue_constants.restype_num)
         pos = np.zeros((residue_constants.atom_type_num, 3))

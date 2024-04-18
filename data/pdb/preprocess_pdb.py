@@ -151,9 +151,9 @@ def process_mmcif(
     if mmcif_resolution >= max_resolution:
         raise errors.ResolutionError(
             f'Too high resolution {mmcif_resolution}')
-    if mmcif_resolution == 0.0:
-        raise errors.ResolutionError(
-            f'Invalid resolution {mmcif_resolution}')
+    # if mmcif_resolution == 0.0:
+    #     raise errors.ResolutionError(
+    #         f'Invalid resolution {mmcif_resolution}')
 
     # Extract all chains
     struct_chains = {
@@ -166,6 +166,8 @@ def process_mmcif(
     all_seqs = set()
     for chain_id, chain in struct_chains.items():
         # Convert chain id into int
+        if chain_id == '.':
+            chain_id = 'A'
         chain_id = du.chain_str_to_int(chain_id)
         chain_prot = parsers.process_chain(chain, chain_id)
         chain_dict = dataclasses.asdict(chain_prot)

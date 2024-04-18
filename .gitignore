@@ -1,0 +1,5 @@
+preprocessed_pdbs/
+*.pyc
+model_samples
+inpaint_test_out
+protein_diffusion.*
