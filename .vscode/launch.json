@@ -16,12 +16,29 @@
                 "--debug"
             ]
 
-        }
+        },
         {
             "name": "List_of_atoms",
             "type": "debugpy",
             "request": "launch",
             "program": "List_of_atoms.py",
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "Train",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "experiments/torch_train_diffusion.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--disable_wandb",
+            ]
+        },
+        {
+            "name": "Generate sample",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "generate_sample.py",
             "console": "integratedTerminal",
         }
     ]

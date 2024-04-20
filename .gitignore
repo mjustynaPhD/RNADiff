@@ -3,3 +3,5 @@ preprocessed_pdbs/
 model_samples
 inpaint_test_out
 protein_diffusion.*
+pdbs/
+torch_train_diffusion/*

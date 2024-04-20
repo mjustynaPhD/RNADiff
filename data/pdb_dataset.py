@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import torch
 import random
+import jax
 
 from torch.utils.data import Dataset
 from data import utils as du
@@ -12,11 +13,11 @@ from data import utils as du
 def get_config(config_override=None, debug=False) -> ml_collections.ConfigDict:
     m = lambda x, y: y if debug else x
     cfg = ml_collections.ConfigDict({
-        'pdb_csv_path': '',
-        'pdb_self_consistency_path': '',
+        'pdb_csv_path': 'preprocessed_pdbs/metadata_debug.csv',
+        'pdb_self_consistency_path': 'preprocessed_pdbs/metadata_debug.csv',
 
         'max_len': 128,
-        'min_len': 40,
+        'min_len': 2,
         'crop_len': None,
 
         'plddt_filter': None,
@@ -70,28 +71,28 @@ class PdbDataset(Dataset):
 
         self.raw_csv = pdb_csv
         self.sc_csv = pdb_self_consistency
-        if max_chain_filter is not None:
-            pdb_csv = pdb_csv[pdb_csv.num_chains <= max_chain_filter]
-        if max_len is not None:
-            pdb_csv = pdb_csv[pdb_csv.modeled_seq_len <= max_len]
-        if min_len is not None:
-            pdb_csv = pdb_csv[pdb_csv.modeled_seq_len >= min_len]
-            pdb_csv = pdb_csv[pdb_csv.seq_len >= min_len]
-        if monomer_only:
-            pdb_csv = pdb_csv[pdb_csv.oligomeric_detail == 'monomeric']
-        if pdb_name_allowlist is not None:
-            pdb_csv = pdb_csv[pdb_csv.pdb_name.isin(pdb_name_allowlist)]
-            assert len(pdb_csv) == len(pdb_name_allowlist)
-        if plddt_filter is not None or rmsd_filter is not None or tm_filter is not None:
-            pdb_csv = pd.merge(
-                pdb_self_consistency, pdb_csv,
-                left_on='pdb_name', right_on='pdb_name')
-        if plddt_filter is not None:
-            pdb_csv = pdb_csv[pdb_csv.min_plddt > plddt_filter]
-        if rmsd_filter is not None:
-            pdb_csv = pdb_csv[pdb_csv.min_rmsd < rmsd_filter]
-        if tm_filter is not None:
-            pdb_csv = pdb_csv[pdb_csv.max_tm_score > tm_filter]
+        # if max_chain_filter is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.num_chains <= max_chain_filter]
+        # if max_len is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.modeled_seq_len <= max_len]
+        # if min_len is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.modeled_seq_len >= min_len]
+        #     pdb_csv = pdb_csv[pdb_csv.seq_len >= min_len]
+        # if monomer_only:
+        #     pdb_csv = pdb_csv[pdb_csv.oligomeric_detail == 'monomeric']
+        # if pdb_name_allowlist is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.pdb_name.isin(pdb_name_allowlist)]
+        #     assert len(pdb_csv) == len(pdb_name_allowlist)
+        # if plddt_filter is not None or rmsd_filter is not None or tm_filter is not None:
+        #     pdb_csv = pd.merge(
+        #         pdb_self_consistency, pdb_csv,
+        #         left_on='pdb_name', right_on='pdb_name')
+        # if plddt_filter is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.min_plddt > plddt_filter]
+        # if rmsd_filter is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.min_rmsd < rmsd_filter]
+        # if tm_filter is not None:
+        #     pdb_csv = pdb_csv[pdb_csv.max_tm_score > tm_filter]
         self.csv = pdb_csv
         assert len(pdb_csv)
 

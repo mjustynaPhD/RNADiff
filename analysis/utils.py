@@ -6,7 +6,26 @@ from data import protein
 from data import residue_constants
 from scipy.spatial.transform import Rotation
 
-CA_IDX = residue_constants.atom_order['CA']
+CA_IDX = residue_constants.atom_order['C4\'']
+
+# RNA_BB = ['P', 'OP1', 'OP2', 'O5\'', 'C5\'', 'C4\'','C3\'', 'O3\'']
+# RNA_IDX = [residue_constants.atom_order[x] for x in RNA_BB]
+# CA_IDX = residue_constants.atom_order['C4\'']
+
+
+# def create_bb_prot(bb_pos: np.ndarray):
+#     assert bb_pos.ndim == 2
+#     assert bb_pos.shape[1] == 3
+#     bb_pos = bb_pos.reshape(-1, 8, 3)
+#     n = bb_pos.shape[0]
+#     imputed_atom_pos = np.zeros((n, 27, 3))
+#     imputed_atom_pos[:, RNA_IDX] = bb_pos
+#     imputed_atom_mask = np.zeros([n, 27])
+#     imputed_atom_mask[:, RNA_IDX] = 1.0
+#     residue_index = np.arange(n)
+#     chain_index = np.zeros(n)
+#     b_factors = np.zeros([n, 27])
+#     aatype = np.zeros(n, dtype=np.int)
 
 
 def create_bb_prot(bb_pos: np.ndarray):

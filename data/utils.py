@@ -452,7 +452,7 @@ def sample_inpaint_mask(percentage, num_masks, num_res, sample_mask_len=True):
     return final_mask
 
 def create_bb_prot(model_pos):
-    ca_idx = residue_constants.atom_order['CA']
+    ca_idx = residue_constants.atom_order['C4\'']
     n = model_pos.shape[0]
     imputed_atom_pos = np.zeros([n, 37, 3])
     imputed_atom_pos[:, ca_idx] = model_pos

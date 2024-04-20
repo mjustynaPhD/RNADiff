@@ -8,7 +8,7 @@ def load_pdb_motif_problem(motif_start, motif_end, pdb_name, base_dir="./"):
 
     """
     inpaint_example_dir = base_dir + "./pdbs/inpainting_targets/"
-    fn = inpaint_example_dir +pdb_name+ "_1_A.pdb"
+    fn = inpaint_example_dir +pdb_name #+ "_1_A.pdb"
     feats = du.parse_pdb(pdb_name, fn, scale_factor=10)
     true_len = int(sum(feats['bb_mask']))
     target_len = true_len

@@ -127,12 +127,13 @@ class ReverseDiffusionDense(nn.Module):
             e_embed_size,
             n_layers_per_egnn,
             network,
-            use_sequence_transformer,
+            # use_sequence_transformer,
             use_positional_encoding,
             use_rel_positional_encoding,
             b_0,
             b_T,
             scale_eps,
+            num_heads=None,
             ):
         super(ReverseDiffusionDense, self).__init__()
         self.T = T
@@ -143,7 +144,7 @@ class ReverseDiffusionDense(nn.Module):
         self.e_embed_size = e_embed_size if e_embed_size is not None else h_embed_size
         self.device = device
         self.network = network
-        self.use_sequence_transformer = use_sequence_transformer
+        # self.use_sequence_transformer = use_sequence_transformer
         self.use_positional_encoding = use_positional_encoding
         self.use_rel_positional_encoding = use_rel_positional_encoding
         self.scale_eps = scale_eps
@@ -187,7 +188,7 @@ class ReverseDiffusionDense(nn.Module):
             eps_theta_val: estimate of error for each step shape [B, N, 3]
         """
         # Scale protein positions to be on similar scale as noise distribution.
-        bb_pos = input_feats['bb_corrupted'].type(torch.float32)# / 10.
+        bb_pos = input_feats['bb_corrupted'].type(torch.float32) # / 10.
         curr_pos = bb_pos.clone() # [B, N, D]
         bb_mask = input_feats['bb_mask'].type(torch.float32) # [B, N]
         bb_2d_mask = bb_mask[:, None, :] * bb_mask[:, :, None]

@@ -20,6 +20,7 @@ import tree
 import numpy as np
 import GPUtil
 import ml_collections
+import wandb
 
 from data import pdb_dataset
 from data import diffuser
@@ -127,15 +128,15 @@ def get_config(debug=False):
     m = lambda x, y: y if debug else x
     data_config = pdb_dataset.get_config()
 
-    T = m(1024, 256)
+    T = m(512, 256)
     N = data_config['max_len']
     cfg = ConfigDict({
         'experiment': {
             'T': T,
-            'batch_size': m(16, 2),
-            'learning_rate': 1e-4,
+            'batch_size': m(8, 2),
+            'learning_rate': 1e-3,
             'train_steps': 1000000,
-            'ckpt_freq': 100000,
+            'ckpt_freq': 10000,
             'ckpt_dir': '',
             'log_freq': 1000,
             'b_0': 0.0001,
@@ -166,8 +167,8 @@ def write_checkpoint(
         'cfg': exp_cfg
     }
     ckpt_dir = os.path.dirname(ckpt_path)
-    for fname in os.listdir(ckpt_dir):
-        os.remove(os.path.join(ckpt_dir, fname))
+    # for fname in os.listdir(ckpt_dir):
+    #     os.remove(os.path.join(ckpt_dir, fname))
     print(f'Serializing experiment state to {ckpt_path}')
     du.write_pkl(ckpt_path, ckpt_state)
 
@@ -289,6 +290,7 @@ class Experiment:
             return_labels=True,
             return_name=not is_training,
             T=self._exp_cfg.T,
+            # pdb_csv_path="preprocessed_pdbs/metadata_debug.csv",
         )
         dataset = pdb_dataset.PdbDataset(
             **global_cfg,
